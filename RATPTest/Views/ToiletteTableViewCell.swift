@@ -31,7 +31,7 @@ class ToiletteTableViewCell: UITableViewCell, NibReusable {
         setup()
         titleLabel.text = model.adresse ?? "N/A"
         subtitleLabel.text = model.gestionnaire
-        timeLabel.text = model.displayHoraire.value
+        timeLabel.text = model.displayHoraire.value()
         pmrIcon.isHidden = !model.hasPmrAccess
         distanceMainContainer.isHidden = distance == nil
 

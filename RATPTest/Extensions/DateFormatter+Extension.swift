@@ -8,10 +8,11 @@
 import Foundation
 
 extension DateFormatter {
-    static var shortFormatter: DateFormatter {
+    static func shortFormatter(withLocale locale: Locale) -> DateFormatter {
         let dateFormatter = DateFormatter()
         dateFormatter.timeStyle = .short
         dateFormatter.dateStyle = .none
+        dateFormatter.locale = locale
         return dateFormatter
     }
 }

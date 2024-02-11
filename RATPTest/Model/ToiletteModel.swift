@@ -21,7 +21,7 @@ enum DisplayHoraire {
     case availableOnEquipment
     case times(opening: Date, closing: Date)
 
-    var value: String {
+    func value(withLocale locale: Locale = Locale.current) -> String {
         switch self {
         case .open247:
             return "Ouvert 24h/24"
@@ -30,7 +30,7 @@ enum DisplayHoraire {
         case .availableOnEquipment:
             return "Détail des horaires disponibles sur place"
         case .times(let opening, let closing):
-            return String(format: "Ouvert de %@ à %@", DateFormatter.shortFormatter.string(from: opening), DateFormatter.shortFormatter.string(from: closing))
+            return String(format: "Ouvert de %@ à %@", DateFormatter.shortFormatter(withLocale: locale).string(from: opening), DateFormatter.shortFormatter(withLocale: locale).string(from: closing))
         }
     }
 }
