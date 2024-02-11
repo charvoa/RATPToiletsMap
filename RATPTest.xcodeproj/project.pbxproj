@@ -125,6 +125,7 @@
 			children = (
 				3C3E45732B77A41500D2F469 /* AppDelegate.swift */,
 				3C3E45B22B77BE7700D2F469 /* Extensions */,
+				3C6FF5C62B79347B00677F44 /* Location */,
 				3C3E45A92B77A6C800D2F469 /* Network */,
 				3C3E45AA2B77A6CF00D2F469 /* Model */,
 				3C3E45752B77A41500D2F469 /* SceneDelegate.swift */,
@@ -161,7 +162,6 @@
 			children = (
 				3C3E45A32B77A47C00D2F469 /* NetworkProtocol.swift */,
 				3C3E45A52B77A52700D2F469 /* NetworkManager.swift */,
-				3C6FF5BE2B77D8AF00677F44 /* LocationService.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -192,6 +192,14 @@
 				3C3E45B62B77C32B00D2F469 /* ToiletteTableViewCell.xib */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		3C6FF5C62B79347B00677F44 /* Location */ = {
+			isa = PBXGroup;
+			children = (
+				3C6FF5BE2B77D8AF00677F44 /* LocationService.swift */,
+			);
+			path = Location;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
