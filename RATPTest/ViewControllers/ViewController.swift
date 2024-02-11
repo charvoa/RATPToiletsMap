@@ -7,6 +7,7 @@
 
 import UIKit
 import CoreLocation
+import SwiftUI
 
 protocol MainViewModelProtocol: AnyObject {
     func didEndRefreshing()
@@ -163,6 +164,12 @@ extension ViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        let item = viewModel.filteredItems[indexPath.row]
+        let viewModel = DetailsViewModel(toiletteModel: item)
+        let rootView = DetailsView(viewModel: viewModel)
+
+        let viewController = UIHostingController(rootView: rootView)
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
 }
 

@@ -35,7 +35,8 @@ enum DisplayHoraire {
     }
 }
 
-struct ToiletteModel: Codable {
+struct ToiletteModel: Codable, Identifiable {
+    var id = UUID()
     private var complementAdresse: String?
     private var geoPoint2d: [Double]
     private var accesPmr: String?
@@ -52,6 +53,17 @@ struct ToiletteModel: Codable {
         case relaisBebe = "relais_bebe"
 
         case horaire, gestionnaire, adresse, type
+    }
+
+    init() {
+        self.complementAdresse = "numero_de_voie nom_de_voie"
+        self.geoPoint2d = [48.8789207974837, 2.294473730079993]
+        self.accesPmr = "Oui"
+        self.horaire = "6 h - 22 h"
+        self.gestionnaire = "Toilette publique de la Ville de Paris"
+        self.adresse = "4  AVENUE NIEL"
+        self.type = .sanisette
+        self.relaisBebe = "Non"
     }
 
     var hasPmrAccess: Bool {

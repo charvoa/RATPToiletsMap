@@ -76,8 +76,7 @@ private extension MapViewController {
     }
 
     func centerMap() {
-        let centerOfParis = CLLocationCoordinate2D(latitude: 48.864716, longitude:  2.349014)
-        let region = MKCoordinateRegion(center: centerOfParis, latitudinalMeters: CLLocationDistance(exactly: 5000)!, longitudinalMeters: CLLocationDistance(exactly: 5000)!)
+        let region = MKCoordinateRegion(center: LocationService.centerOfParis, latitudinalMeters: CLLocationDistance(exactly: 5000)!, longitudinalMeters: CLLocationDistance(exactly: 5000)!)
         mapView.setRegion(mapView.regionThatFits(region), animated: true)
     }
 }

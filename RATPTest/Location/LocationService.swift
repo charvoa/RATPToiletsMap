@@ -26,6 +26,10 @@ class LocationService: NSObject {
 
 // MARK: - Helper
 extension LocationService {
+    class var centerOfParis: CLLocationCoordinate2D {
+        return CLLocationCoordinate2D(latitude: 48.864716, longitude:  2.349014)
+    }
+
     class func displayDistance(_ value: Double) -> String {
         let measurement = Measurement(value: value, unit: UnitLength.meters).converted(to: value > 100 ? .kilometers : .meters)
 
