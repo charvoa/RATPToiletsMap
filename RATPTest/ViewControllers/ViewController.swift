@@ -41,10 +41,16 @@ final class MainViewModel {
         }
     }
 
+    private var loadedOnce = false
+
     weak var delegate: MainViewModelProtocol?
 
     private let networkManager: NetworkProtocol
     private let locationService = LocationService()
+
+    var emptyViewMessage: String {
+        return loadedOnce ? "Aucun élément correspondant à votre recherche ..." : "Chargement en cours ..."
+    }
 
     init() {
         self.networkManager = NetworkManager()
@@ -82,6 +88,7 @@ final class MainViewModel {
         Task {
             guard let newItems = await getItems(from: from) else { return }
 
+            loadedOnce = true
             cursor = from
 
             items.append(contentsOf: newItems)
@@ -136,7 +143,7 @@ class ViewController: UIViewController {
 extension ViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if viewModel.filteredItems.count == 0 {
-            self.tableView.setEmptyMessage("Aucun élément correspondant à votre recherche ...")
+            self.tableView.setEmptyMessage(viewModel.emptyViewMessage)
         } else {
             self.tableView.restore()
         }
