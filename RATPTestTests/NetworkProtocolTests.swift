@@ -11,10 +11,10 @@ import XCTest
 private class NetworkProtocolTest: NetworkProtocol {
     var baseUrl: URL { return URL(string: "https://google.com")! }
 
-    func fetchData(from: Int, limit: Int) async throws -> [RATPTest.ToiletteModel] {
-        struct Response: Codable {
-            struct Record: Codable {
-                var fields: ToiletteModel
+    func fetchData(from: Int, limit: Int) async throws -> [RATPTest.ToiletteModelNetwork] {
+        struct Response: Decodable {
+            struct Record: Decodable {
+                var fields: ToiletteModelNetwork
             }
 
             var records: [Record]
@@ -45,16 +45,16 @@ final class NetworkProtocolTests: XCTestCase {
         let networkManager = NetworkProtocolTest()
         let items = try? await networkManager.fetchData(from: 0, limit: 20)
 
-        let firstItem = items?[0]
+        let firstItem = ToiletteModel(from: items![0])
 
-        let firstDH = firstItem?.displayHoraire
+        let firstDH = firstItem.displayHoraire
 
-        XCTAssert(firstDH?.value(withLocale: Locale(identifier: "en_US_POSIX")).caseInsensitiveCompare("Ouvert de 6:00 AM à 10:00 PM") == .orderedSame)
+        XCTAssert(firstDH.value(withLocale: Locale(identifier: "en_US_POSIX")).caseInsensitiveCompare("Ouvert de 6:00 AM à 10:00 PM") == .orderedSame)
 
-        let secondItem = items?[2]
+        let secondItem = ToiletteModel(from: items![2])
 
-        let secondDH = secondItem?.displayHoraire
+        let secondDH = secondItem.displayHoraire
 
-        XCTAssert(secondDH?.value(withLocale: Locale(identifier: "en_US_POSIX")).caseInsensitiveCompare("Ouvert 24h/24") == .orderedSame)
+        XCTAssert(secondDH.value(withLocale: Locale(identifier: "en_US_POSIX")).caseInsensitiveCompare("Ouvert 24h/24") == .orderedSame)
     }
 }

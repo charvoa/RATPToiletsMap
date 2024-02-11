@@ -26,7 +26,7 @@ class MapViewModel {
 
     func fetchAll() {
         Task {
-            items = try? await networkManager.fetchData(from: 0, limit: 800)
+            items = try? await networkManager.fetchData(from: 0, limit: 800).compactMap { ToiletteModel(from: $0) }
             delegate?.didEndRefreshing()
         }
     }

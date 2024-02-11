@@ -35,16 +35,15 @@ enum DisplayHoraire {
     }
 }
 
-struct ToiletteModel: Codable, Identifiable {
-    var id = UUID()
-    private var complementAdresse: String?
-    private var geoPoint2d: [Double]
-    private var accesPmr: String?
-    private var horaire: String?
+struct ToiletteModelNetwork: Decodable {
+    var complementAdresse: String?
+    var geoPoint2d: [Double]
+    var accesPmr: String?
+    var horaire: String?
     var gestionnaire: String?
     var adresse: String?
     var type: ToiletteType
-    private var relaisBebe: String?
+    var relaisBebe: String?
 
     enum CodingKeys: String, CodingKey {
         case complementAdresse = "complement_adresse"
@@ -54,16 +53,37 @@ struct ToiletteModel: Codable, Identifiable {
 
         case horaire, gestionnaire, adresse, type
     }
+}
 
-    init() {
-        self.complementAdresse = "numero_de_voie nom_de_voie"
-        self.geoPoint2d = [48.8789207974837, 2.294473730079993]
-        self.accesPmr = "Oui"
-        self.horaire = "6 h - 22 h"
-        self.gestionnaire = "Toilette publique de la Ville de Paris"
-        self.adresse = "4  AVENUE NIEL"
-        self.type = .sanisette
-        self.relaisBebe = "Non"
+struct ToiletteModel: Identifiable {
+    let id: UUID
+    private let complementAdresse: String?
+    private let geoPoint2d: [Double]
+    private let accesPmr: String?
+    private let horaire: String?
+    private let gestionnaire: String?
+    private let adresse: String?
+    private let type: ToiletteType
+    private let relaisBebe: String?
+
+    init(from networkModel: ToiletteModelNetwork) {
+        self.id = UUID()
+        self.complementAdresse = networkModel.complementAdresse
+        self.geoPoint2d = networkModel.geoPoint2d
+        self.accesPmr = networkModel.accesPmr
+        self.horaire = networkModel.horaire
+        self.gestionnaire = networkModel.gestionnaire
+        self.adresse = networkModel.adresse
+        self.type = networkModel.type
+        self.relaisBebe = networkModel.relaisBebe
+    }
+
+    var title: String {
+        return adresse ?? "N/A"
+    }
+
+    var subtitle: String {
+        return gestionnaire ?? "N/A"
     }
 
     var hasPmrAccess: Bool {

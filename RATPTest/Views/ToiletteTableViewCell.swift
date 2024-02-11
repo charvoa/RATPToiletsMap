@@ -29,8 +29,8 @@ class ToiletteTableViewCell: UITableViewCell, NibReusable {
 
     func configure(with model: ToiletteModel, distance: Double?) {
         setup()
-        titleLabel.text = model.adresse ?? "N/A"
-        subtitleLabel.text = model.gestionnaire
+        titleLabel.text = model.title
+        subtitleLabel.text = model.subtitle
         timeLabel.text = model.displayHoraire.value()
         pmrIcon.isHidden = !model.hasPmrAccess
         distanceMainContainer.isHidden = distance == nil

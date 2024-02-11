@@ -33,12 +33,12 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="aJT-Qq-bnj">
-                        <barButtonItem key="leftBarButtonItem" title="Map" style="done" id="Uud-K0-OEU">
+                        <barButtonItem key="leftBarButtonItem" title="Carte" style="done" id="Uud-K0-OEU">
                             <connections>
                                 <segue destination="0Lv-Yz-Cug" kind="show" identifier="goToMap" id="d4m-xl-DcO"/>
                             </connections>
                         </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" title="Filter" style="done" id="ACi-Pk-ILs"/>
+                        <barButtonItem key="rightBarButtonItem" title="Filtre" style="done" id="ACi-Pk-ILs"/>
                     </navigationItem>
                     <connections>
                         <outlet property="filterButton" destination="ACi-Pk-ILs" id="aKp-AE-U7x"/>

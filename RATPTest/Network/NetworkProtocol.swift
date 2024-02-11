@@ -17,5 +17,5 @@ enum NetworkError: Error {
 protocol NetworkProtocol {
     var baseUrl: URL { get }
 
-    func fetchData(from: Int, limit: Int) async throws -> [ToiletteModel]
+    func fetchData(from: Int, limit: Int) async throws -> [ToiletteModelNetwork]
 }

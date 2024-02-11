@@ -100,7 +100,7 @@ final class MainViewModel {
     }
 
     private func getItems(from: Int = 0) async -> [ToiletteModel]? {
-        return try? await networkManager.fetchData(from: from, limit: 20)
+        return try? await networkManager.fetchData(from: from, limit: 20).compactMap { ToiletteModel(from: $0) }
     }
 }
 

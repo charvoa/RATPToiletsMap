@@ -18,11 +18,11 @@ struct DetailsViewModel {
     }
 
     var title: String {
-        toiletteModel.adresse ?? "N/A"
+        toiletteModel.title
     }
 
     var subtitle: String {
-        toiletteModel.gestionnaire ?? "N/A"
+        toiletteModel.subtitle
     }
 }
 
@@ -72,5 +72,5 @@ struct DetailsView: View {
 }
 
 #Preview {
-    DetailsView(viewModel: DetailsViewModel(toiletteModel: ToiletteModel()))
+    DetailsView(viewModel: DetailsViewModel(toiletteModel: ToiletteModel(from: ToiletteModelNetwork(complementAdresse: "numero_de_voie nom_de_voie", geoPoint2d: [48.8789207974837, 2.294473730079993], accesPmr: "Oui", horaire: "6 h - 22 h", gestionnaire: "Toilette publique de la Ville de Paris", adresse: "4 ANUE NIEL", type: .other, relaisBebe: "None"))))
 }

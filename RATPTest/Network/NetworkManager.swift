@@ -17,7 +17,7 @@ class NetworkManager: NetworkProtocol {
         return decoder
     }()
 
-    func fetchData(from start: Int = 0, limit: Int = 20) async throws -> [ToiletteModel] {
+    func fetchData(from start: Int = 0, limit: Int = 20) async throws -> [ToiletteModelNetwork] {
         let requestUrl = baseUrl.appending("start", value: "\(start)").appending("rows", value: "\(limit)")
 
         guard let (data, response) = try? await URLSession.shared.data(from: requestUrl),
@@ -29,9 +29,9 @@ class NetworkManager: NetworkProtocol {
             throw NetworkError.errorCode(httpResponse.statusCode)
         }
 
-        struct Response: Codable {
-            struct Record: Codable {
-                var fields: ToiletteModel
+        struct Response: Decodable {
+            struct Record: Decodable {
+                var fields: ToiletteModelNetwork
             }
 
             var records: [Record]
