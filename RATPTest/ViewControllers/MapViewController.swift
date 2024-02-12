@@ -9,29 +9,6 @@ import Foundation
 import UIKit
 import MapKit
 
-protocol MapViewModelProtocol: AnyObject {
-    func didEndRefreshing()
-}
-
-class MapViewModel {
-    var items: [ToiletteModel]?
-
-    weak var delegate: MapViewModelProtocol?
-
-    private var networkManager: NetworkProtocol
-
-    init(networkManager: NetworkProtocol) {
-        self.networkManager = networkManager
-    }
-
-    func fetchAll() {
-        Task {
-            items = try? await networkManager.fetchData(from: 0, limit: 800).compactMap { ToiletteModel(from: $0) }
-            delegate?.didEndRefreshing()
-        }
-    }
-}
-
 final class MapViewController: UIViewController {
 
     @IBOutlet private weak var mapView: MKMapView!
@@ -53,18 +30,24 @@ final class MapViewController: UIViewController {
 }
 
 // MARK: - MapViewModelProtocol
-extension MapViewController: MapViewModelProtocol {
+extension MapViewController: MapViewModelProtocol, MKMapViewDelegate {
     func didEndRefreshing() {
         DispatchQueue.main.async {
             self.viewModel?.items?
                 .forEach {
                     if let coordinates = $0.coordinates {
-                        let annotation = MKPointAnnotation()
-                        annotation.coordinate = coordinates
+                        let annotation = ToiletteModelAnnotation(title: $0.title, coordinates: coordinates, isOpen: $0.isOpen)
                         self.mapView.addAnnotation(annotation)
                     }
                 }
         }
+    }
+
+    func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
+        guard let annotation = annotation as? ToiletteModelAnnotation else { return nil }
+        let annotationView = MKMarkerAnnotationView(annotation: annotation, reuseIdentifier: "MyMarker")
+        annotationView.markerTintColor = annotation.tintColor
+        return annotationView
     }
 }
 
@@ -73,6 +56,7 @@ private extension MapViewController {
     func setup() {
         viewModel?.delegate = self
         mapView.showsUserLocation = true
+        mapView.delegate = self
     }
 
     func centerMap() {
