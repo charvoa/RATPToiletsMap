@@ -55,7 +55,7 @@ struct ToiletteModelNetwork: Decodable {
     }
 }
 
-struct ToiletteModel: Identifiable {
+struct ToiletteModel: Identifiable, Hashable {
     let id: UUID
     private let complementAdresse: String?
     private let geoPoint2d: [Double]

@@ -11,6 +11,7 @@ import SwiftUI
 
 protocol MainViewModelProtocol: AnyObject {
     func didEndRefreshing()
+    func shouldShowEmptyView(show: Bool)
 }
 
 enum FilterType {
@@ -20,6 +21,10 @@ enum FilterType {
 }
 
 final class MainViewModel {
+    enum Section {
+        case main
+    }
+
     var filteredItems: [ToiletteModel] {
         switch filter {
         case .pmr:
@@ -37,7 +42,7 @@ final class MainViewModel {
     var cursor: Int
     var filter: FilterType? {
         didSet {
-            delegate?.didEndRefreshing()
+            filterDataSource()
         }
     }
 
@@ -47,6 +52,9 @@ final class MainViewModel {
 
     private let networkManager: NetworkProtocol
     private let locationService = LocationService()
+
+    private var snapshot = NSDiffableDataSourceSnapshot<Section, ToiletteModel>()
+    private var dataSource: UITableViewDiffableDataSource<Section, ToiletteModel>?
 
     var emptyViewMessage: String {
         return loadedOnce ? "Aucun élément correspondant à votre recherche ..." : "Chargement en cours ..."
@@ -78,9 +86,10 @@ final class MainViewModel {
             cursor = 0
             items = newItems
 
-            DispatchQueue.main.async {
-                self.delegate?.didEndRefreshing()
-            }
+            snapshot.deleteAllItems()
+            snapshot.appendSections([.main])
+            snapshot.appendItems(items)
+            updateDataSource()
         }
     }
 
@@ -92,15 +101,46 @@ final class MainViewModel {
             cursor = from
 
             items.append(contentsOf: newItems)
-
-            DispatchQueue.main.async {
-                self.delegate?.didEndRefreshing()
-            }
+            snapshot.appendItems(newItems)
+            updateDataSource()
         }
     }
 
     private func getItems(from: Int = 0) async -> [ToiletteModel]? {
         return try? await networkManager.fetchData(from: from, limit: 20).compactMap { ToiletteModel(from: $0) }
+    }
+}
+
+// MARK: - DiffableDataSource
+
+extension MainViewModel {
+    func makeDataSource(withTableView tableView: UITableView) -> UITableViewDiffableDataSource<Section, ToiletteModel>? {
+        dataSource = UITableViewDiffableDataSource(tableView: tableView) { [weak self] tableView, indexPath, toilette in
+            let cell = tableView.dequeueReusableCell(for: indexPath) as ToiletteTableViewCell
+            cell.configure(with: toilette, distance: self?.distanceFromCurrentPosition(toilette.coordinates))
+            return cell
+        }
+
+        snapshot.appendSections([.main])
+        snapshot.appendItems(items, toSection: .main)
+        updateDataSource()
+
+        return dataSource
+    }
+
+    func updateDataSource() {
+        DispatchQueue.main.async {
+            self.delegate?.shouldShowEmptyView(show: self.snapshot.itemIdentifiers.isEmpty)
+            self.dataSource?.apply(self.snapshot, animatingDifferences: true)
+            self.delegate?.didEndRefreshing()
+        }
+    }
+
+    func filterDataSource() {
+        snapshot.deleteAllItems()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(filteredItems, toSection: .main)
+        updateDataSource()
     }
 }
 
@@ -140,25 +180,7 @@ class ViewController: UIViewController {
     }
 }
 
-extension ViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if viewModel.filteredItems.count == 0 {
-            self.tableView.setEmptyMessage(viewModel.emptyViewMessage)
-        } else {
-            self.tableView.restore()
-        }
-
-        return viewModel.filteredItems.count
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let item = viewModel.filteredItems[indexPath.row]
-
-        let cell = tableView.dequeueReusableCell(for: indexPath) as ToiletteTableViewCell
-        cell.configure(with: item, distance: viewModel.distanceFromCurrentPosition(item.coordinates))
-        return cell
-    }
-
+extension ViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row == tableView.numberOfRows(inSection: 0) - 1 {
             viewModel.fetch(from: viewModel.cursor + indexPath.row)
@@ -222,10 +244,9 @@ private extension ViewController {
     }
 
     func setupTableView() {
-        tableView.dataSource = self
-        tableView.delegate = self
-
         tableView.register(cellType: ToiletteTableViewCell.self)
+        tableView.dataSource = viewModel.makeDataSource(withTableView: tableView)
+        tableView.delegate = self
     }
 }
 
@@ -235,6 +256,14 @@ extension ViewController: MainViewModelProtocol {
     func didEndRefreshing() {
         tableView.reloadData()
         refreshControl.endRefreshing()
+    }
+
+    func shouldShowEmptyView(show: Bool) {
+        if show {
+            self.tableView.setEmptyMessage(viewModel.emptyViewMessage)
+        } else {
+            self.tableView.restore()
+        }
     }
 
     @objc func refresh() {
