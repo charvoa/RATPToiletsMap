@@ -17,7 +17,6 @@ protocol MainViewModelProtocol: AnyObject {
 enum FilterType {
     case pmr
     case open
-    case babyRelay
 }
 
 final class MainViewModel {
@@ -31,8 +30,6 @@ final class MainViewModel {
             return items.filter { $0.hasPmrAccess }
         case .open:
             return items.filter { $0.isOpen == true }
-        case .babyRelay:
-            return items.filter { $0.hasBabyRelay }
         case nil:
             return items
         }
@@ -147,6 +144,7 @@ extension MainViewModel {
 // MARK: - Location Service
 extension MainViewModel: LocationServiceProtocol {
     func locationAuthorized() {
-        self.delegate?.didEndRefreshing()
+        snapshot.reloadSections([.main])
+        updateDataSource()
     }
 }

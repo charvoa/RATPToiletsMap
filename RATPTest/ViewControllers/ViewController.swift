@@ -80,17 +80,12 @@ private extension ViewController {
             self?.setupFilterMenu()
         }
 
-        let babyRelayFilterItem = UIAction(title: "Relai Bébé", image: viewModel.filter == .babyRelay ? UIImage(resource: ImageResource.checkmarkDone) : nil) { [weak self] _ in
-            self?.viewModel.filter = .babyRelay
-            self?.setupFilterMenu()
-        }
-
         let resetItem = UIAction(title: "Par défaut") { [weak self] _ in
             self?.viewModel.filter = nil
             self?.setupFilterMenu()
         }
 
-        let menu = UIMenu(title: "Filtre", options: .displayInline, children: [pmrFilterItem, openFilterItem, babyRelayFilterItem, resetItem])
+        let menu = UIMenu(title: "Filtre", options: .displayInline, children: [pmrFilterItem, openFilterItem, resetItem])
 
         filterButton.menu = menu
     }
