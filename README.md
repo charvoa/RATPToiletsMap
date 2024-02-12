@@ -9,10 +9,14 @@
 
 ### Architecture choices 
 
-I chose a simple MVVM approch for this project. In my opinion this is the simplest, and quickest way to achieve a project of that size, without being too complex, but still clear and evolutive. 
+I chose a simple MVVM approach for this project. In my opinion this is the simplest, and quickest way to achieve a project of that size, without being too complex, but still clear and evolutive. 
 The main part of the app is a list, I chose to use a TableView for its simplicity and performances. Combined with the new UITableViewDiffableDataSource to have a better control on how and what updates should happen, and to add even more readability to the code. The `delegate` pattern has been used quite extensively in the architecture, this is the simplest and quickest way to achieve "reactivity", while being easily maintenable by other developers without considering their seniority, other choices could have been made oviously (e.g. Combine, RxSwift).
 
 While the main UI is done in UIKit + Storyboards, the detail view has been made in SwiftUI. This was done  to show both how UIKit and SwiftUI can work together, and obviously show off my skills. 
+
+### Dependencies
+
+The only dependency is `Reusable`, which is the first dependency I always add to my projects, this is so useful when using TableViews and CollectionViews. Other than that, native and dependecy free is always the better path. 
 
 ### What could be improved 
 
@@ -20,3 +24,4 @@ While the main UI is done in UIKit + Storyboards, the detail view has been made 
 - I chose to keep simplicity for accessing data, that's  why ViewModels have direct access to the network manager. Adding a layer above the network manager (e.g. ToiletteManager) could simplify handling offline access. 
 - Design has not been my main focus, while making sure every data was easily readable by anyone, it could be improved.
 - Filters are only filtering local data for now, so this could be discussed. Do we want that behavior or do we want to make a new request every time a filtering is being done ? 
+- Unit Tests are basics, but ensure that parsing of data, and model are working as expected.

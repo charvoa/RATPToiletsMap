@@ -86,7 +86,12 @@ final class MainViewModel {
             snapshot.deleteAllItems()
             snapshot.appendSections([.main])
             snapshot.appendItems(items)
-            updateDataSource()
+
+            if filter != nil {
+                filterDataSource()
+            } else {
+                updateDataSource()
+            }
         }
     }
 
@@ -99,7 +104,11 @@ final class MainViewModel {
 
             items.append(contentsOf: newItems)
             snapshot.appendItems(newItems)
-            updateDataSource()
+            if filter != nil {
+                filterDataSource()
+            } else {
+                updateDataSource()
+            }
         }
     }
 
@@ -144,7 +153,9 @@ extension MainViewModel {
 // MARK: - Location Service
 extension MainViewModel: LocationServiceProtocol {
     func locationAuthorized() {
-        snapshot.reloadSections([.main])
-        updateDataSource()
+        if snapshot.sectionIdentifiers.contains(.main) {
+            snapshot.reloadSections([.main])
+            updateDataSource()
+        }
     }
 }
